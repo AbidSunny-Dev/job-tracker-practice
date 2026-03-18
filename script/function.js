@@ -11,6 +11,9 @@ let currentStatus = 'all';
 // all elemnts are here
 
 const mainContainer = document.querySelector('main');
+
+const noJobs = document.getElementById('no-jobs');
+
 let total = document.getElementById("total");
 
 let interviewCount = document.getElementById("interview-count");
@@ -51,7 +54,12 @@ function calculateCount() {
   rejectedCount.innerText = rejectedList.length;
 
 
+  
+  if(allCards.children.length==0){
 
+    filteredSection.classList.add('hidden');
+    noJobs.classList.remove('hidden');
+  }
 
 
   if (currentStatus === 'interview-filter-btn') {
@@ -98,6 +106,8 @@ if(id=="all-filter-btn"){
   
   allCards.classList.remove('hidden');
   filteredSection.classList.add('hidden');
+
+
   
   
 }else if(id =="interview-filter-btn"){
@@ -106,6 +116,12 @@ if(id=="all-filter-btn"){
   filteredSection.classList.remove('hidden');
   allCards.classList.add('hidden');
   renderInterview();
+
+  if(interviewList.length==0){
+
+    filteredSection.classList.add('hidden');
+    noJobs.classList.remove('hidden');
+  }
   
   
 
@@ -115,6 +131,13 @@ allCards.classList.add('hidden');
 
 filteredSection.classList.remove('hidden');
  renderRejected();
+
+ 
+  if(rejectedList.length==0){
+
+    filteredSection.classList.add('hidden');
+    noJobs.classList.remove('hidden');
+  }
 
 }
 
@@ -246,6 +269,7 @@ const parentCard = event.target.parentNode.parentNode ;
 
     rejectedList.push(cardInfo) ;
   }
+
   interviewList=interviewList.filter(item=> item.jobTitle != cardInfo.jobTitle)
 
 
@@ -263,7 +287,31 @@ const parentCard = event.target.parentNode.parentNode ;
 
 
 
-  }
+  }  else if (event.target.classList.contains('fa-trash-can') || event.target.parentNode.classList.contains('fa-trash-can')) {
+    
+
+    
+    
+    const parentCard = event.target.closest('.card') || event.target.parentNode.parentNode.parentNode.parentNode;
+    
+    
+    const jobTitle = parentCard.querySelector('.card-title').innerText;
+
+    
+    interviewList = interviewList.filter(item => item.jobTitle !== jobTitle);
+    rejectedList = rejectedList.filter(item => item.jobTitle !== jobTitle);
+
+    parentCard.remove();
+
+    
+    if (currentStatus === 'interview-filter-btn') {
+        renderInterview();
+    } else if (currentStatus === 'rejected-filter-btn') {
+        renderRejected();
+    }
+
+    calculateCount();
+}
 
 
 })
